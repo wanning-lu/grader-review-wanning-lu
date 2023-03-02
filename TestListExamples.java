@@ -20,20 +20,61 @@ public class TestListExamples {
     assertEquals(expected, merged);
   }
 
-  @Test
-  public void testFilter() {
-      ArrayList<String> input = new ArrayList<>();
-      input.add("Moon");
-      input.add("cherry");
-      input.add("moon");
-      input.add("d");
-      input.add("moot");
-      input.add("bc");
+  @Test(timeout = 500)
+  public void testMergeAlreadySorted() {
+    List<String> left = Arrays.asList("Awesome", "Awesomer", "Awesomest");
+    List<String> right = Arrays.asList("Best", "Bester", "Bestest");
+    List<String> merged = ListExamples.merge(left, right);
+    List<String> expected = Arrays.asList("Awesome", "Awesomer", "Awesomest", "Best", "Bester", "Bestest");
+    assertEquals(expected, merged);
+  }
 
-      List<String> expectedResult = new ArrayList<>();
-      StringChecker sc = new IsMoon();
-      expectedResult.add("Moon");
-      expectedResult.add("moon");
-      assertEquals(expectedResult, ListExamples.filter(input, sc));
+  @Test
+  public void testMergeInvalidInput() {
+    StringChecker sc = new IsMoon();
+    assertThrows(NullPointerException.class, () -> {
+      ListExamples.merge(null, sc);
+    });
+    List<String> list = {};
+    assertThrows(NullPointerException.class, () -> {
+      ListExamples.merge(list, null);
+    });
+  }
+
+  @Test
+  public void testFilterInvalidInput() {
+    List<String> list = {};
+    assertThrows(NullPointerException.class, () -> {
+      ListExamples.filter(null, list);
+    });
+    assertThrows(NullPointerException.class, () -> {
+      ListExamples.filter(list, null);
+    });
+  }
+
+  @Test
+  public void testFilterWithMatch() {
+    ArrayList<String> input = new ArrayList<>();
+    input.add("Moon");
+    input.add("cherry");
+    input.add("moon");
+    input.add("d");
+    input.add("moot");
+    input.add("bc");
+
+    List<String> expectedResult = new ArrayList<>();
+    StringChecker sc = new IsMoon();
+    expectedResult.add("Moon");
+    expectedResult.add("moon");
+    assertEquals(expectedResult, ListExamples.filter(input, sc));
+  }
+
+  @Test
+  public void testFilterWithoutMatch() {
+    List<String> input = Arrays.asList("moo", "hello", "mOOOn", "moomoo");
+    List<String> expected = Arrays.asList();
+    StringChecker sc = new IsMoon();
+
+    assertEquals(expected, ListExamples.filter(input, sc));
   }
 }
